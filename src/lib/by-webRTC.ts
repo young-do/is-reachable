@@ -1,19 +1,19 @@
 export const byWebRTC = (
   hostname: string,
   iceServer: RTCIceServer = { urls: hostname },
-): Promise<boolean> => {
+): Promise<{ testable: boolean; reachable: boolean }> => {
   if (typeof RTCPeerConnection === 'undefined') {
-    return Promise.resolve(false);
+    return Promise.resolve({ testable: false, reachable: false });
   }
 
   return checkTURNServer(iceServer)
     .then(res => {
-      console.log('[isReachable:byWebRTC]', hostname, res);
-      return res;
+      console.log('[isReachable:byWebRTC]', hostname, iceServer, res);
+      return { testable: true, reachable: res };
     })
     .catch(err => {
-      console.warn('[isReachable:byWebRTC]', hostname, err);
-      return false;
+      console.warn('[isReachable:byWebRTC]', hostname, iceServer, err);
+      return { testable: true, reachable: false };
     });
 };
 
